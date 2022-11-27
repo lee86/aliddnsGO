@@ -1,0 +1,4 @@
+ip: "a.b.c.d"
+type: "udp"
+logis: false
+tag: "aliddns"

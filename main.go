@@ -45,7 +45,7 @@ func main() {
 		qs.queryDomain()
 
 		if len(qs.Body.DomainRecords.Record) == 0 {
-			log.Infof("本地ip:%v\t远端不存在此解析\t现在更新!...", localIp)
+			log.Infof("本地ip:%v\t远端不存在此解析\t现在开始添加!...", localIp)
 			qs.addDomain()
 			return
 		}
@@ -54,7 +54,7 @@ func main() {
 			return
 		} else {
 			log.Infof("本地ip:%v\t远端ip:%v\t现在更新", localIp, qs.Body.DomainRecords.Record[0].Value)
-			qs.addDomain()
+			qs.updateDomain()
 			return
 		}
 	}

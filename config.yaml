@@ -1,0 +1,4 @@
+AccessKeyId: xxxxxxxxxx #阿里云id
+AccessSecret: xxxxxxxxxxxxxxxxxxxx #阿里云token
+MainDomain: xxx.xxx #顶级域名
+SubDomain: xx #一级域名 SubDomain.MainDomain

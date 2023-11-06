@@ -1,23 +1,29 @@
-# 根据阿里官方接口查询，添加，更新DNS解析记录
+#   
 
-该项目为调用阿里官方接口查询，添加，更新DNS解析记录，由于原aliddns插件无法添加*泛解析，遂使用golang参考官方接口开发
+用golang实现aliddns，同时对certbot进行txt信息更新提交
 
-## 运行条件
+## 更新ipv6
 
-- 仓库中的aliddns架构为AMD64，平台linux，x86_64软路由可直接替换运行，其余架构请自行编译
+```shell
+aliddns -rt ipv6 -f /xxxx/xxxx.yaml # 默认配置文件 /etc/ddns/config.yaml
+```
 
-- openwrt 安装aliddns，ddns插件
+```shell
+aliddns # 如果采用默认配置，且目标为更新ddns，则只需要此条命令
+```
 
-- 在阿里云帐户中获取您的 [凭证](https://usercenter.console.aliyun.com/#/manage/ak)并通过它替换aliddns插件中的
-  ACCESS_KEY_ID 以及 ACCESS_KEY_SECRET;
+## 证书相关
 
-- 替换 /usr/sbin/aliddns,授权运行
+### 申请证书
 
-## 使用的 API
+注意，aliddns通过读取config.yaml来决定更新内容
 
-- AddDomainRecord
-  调用AddDomainRecord根据传入参数添加解析记录。文档示例，可以参考：[文档](https://next.api.aliyun.com/document/Alidns/2015-01-09/AddDomainRecord)
-- UpdateDomainRecord
-  调用UpdateDomainRecord根据传入参数更新解析记录。文档示例，可以参考：[文档](https://next.api.aliyun.com/document/Alidns/2015-01-09/UpdateDomainRecord)
-- DescribeDomainRecords
-  调用DescribeDomainRecords根据传入参数查询解析记录。文档示例，可以参考：[文档](https://next.api.aliyun.com/document/Alidns/2015-01-09/DescribeDomainRecords)
+```shell
+certbot certonly  -d *.example.com --manual --preferred-challenges dns --dry-run  --manual-auth-hook "aliddns -rt cert -f /xxxx/xxx.yaml"
+```
+
+### 更新证书(同时重启gitlab nginx服务)
+
+```shell
+certbot renew  --manual --preferred-challenges dns --manual-auth-hook "aliddns -rt cert" --deploy-hook "gitlab-ctl restart nginx"
+```

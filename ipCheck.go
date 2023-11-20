@@ -29,7 +29,7 @@ func (qs *QueryStruct) queryDomain() {
 	checkError(err)
 }
 
-// addDomain 添加解析
+// addDomainV4 添加解析
 func (qs *QueryStruct) addDomainV4() {
 	addDomainRecordRequest := &alidns20150109.AddDomainRecordRequest{
 		DomainName: tea.String(qs.MainDomain),

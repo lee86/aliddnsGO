@@ -33,6 +33,7 @@ func (qs *QueryStruct) queryDomain() {
 	checkError(err)
 }
 
+// CreateClient 创建client
 func (qs *QueryStruct) CreateClient() {
 	config := &openapi.Config{
 		AccessKeyId:     &qs.AccessKeyId,
@@ -98,6 +99,7 @@ func (qs *QueryStruct) GetOutBoundIPV4() {
 	qs.Value = strings.Split(localAddr.String(), ":")[0]
 }
 
+// DnsCheck 与返回的解析内容对比，确认是否需要更新、新增操作
 func (qs *QueryStruct) DnsCheck() {
 	qs.CreateClient()
 	qs.queryDomain()

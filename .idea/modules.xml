@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/aliddnsGo.iml" filepath="$PROJECT_DIR$/.idea/aliddnsGo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/go-aliddns.iml" filepath="$PROJECT_DIR$/.idea/go-aliddns.iml" />
     </modules>
   </component>
 </project>

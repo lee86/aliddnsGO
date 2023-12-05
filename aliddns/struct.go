@@ -18,6 +18,7 @@ type QueryStruct struct {
 	ValueType    string
 	IsTest       bool
 }
+
 type Headers struct {
 	PageNumber               int    `json:"PageNumber,omitempty"`
 	AccessControlAllowOrigin string `json:"access-control-allow-origin,omitempty"`

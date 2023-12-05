@@ -21,7 +21,7 @@ func main() {
 	flag.Parse()
 	if flag.Parsed() {
 		qs.IsTest = *isTest
-		//fmt.Println(*Key, *renewType)
+
 		conf.MustLoad(*configFile, &account)
 
 		qs.AccessKeyId = account.AccessKeyId
@@ -31,10 +31,10 @@ func main() {
 		switch *renewType {
 		case "ipv4":
 			qs.ValueType = "A"
-			qs.GetOutBoundIPV4()
+			qs.GetOutBoundIP()
 		case "ipv6":
 			qs.ValueType = "AAAA"
-			qs.GetOutBoundIPV6()
+			qs.GetOutBoundIP()
 		case "cert":
 			qs.ValueType = "TXT"
 			qs.SubDomain = dnsHeader + qs.SubDomain

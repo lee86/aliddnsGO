@@ -7,9 +7,18 @@ import (
 	util "github.com/alibabacloud-go/tea-utils/v2/service"
 	"github.com/alibabacloud-go/tea/tea"
 	log "github.com/sirupsen/logrus"
-	"net"
-	"strings"
 )
+
+// CreateClient 创建client
+func (qs *QueryStruct) createClient() {
+	config := &openapi.Config{
+		AccessKeyId:     &qs.AccessKeyId,
+		AccessKeySecret: &qs.AccessSecret,
+	}
+	// 访问的域名
+	config.Endpoint = tea.String("alidns.cn-hangzhou.aliyuncs.com")
+	qs.client, _ = alidns20150109.NewClient(config)
+}
 
 // queryDomain 查询解析记录
 func (qs *QueryStruct) queryDomain() {
@@ -31,17 +40,6 @@ func (qs *QueryStruct) queryDomain() {
 	}
 	err := json.Unmarshal([]byte(jsString), &qs)
 	checkError(err)
-}
-
-// CreateClient 创建client
-func (qs *QueryStruct) CreateClient() {
-	config := &openapi.Config{
-		AccessKeyId:     &qs.AccessKeyId,
-		AccessKeySecret: &qs.AccessSecret,
-	}
-	// 访问的域名
-	config.Endpoint = tea.String("alidns.cn-hangzhou.aliyuncs.com")
-	qs.client, _ = alidns20150109.NewClient(config)
 }
 
 // addDomain 添加解析
@@ -73,49 +71,5 @@ func (qs *QueryStruct) updateDomain() {
 	checkError(_err)
 	if qs.IsTest {
 		log.Info(tea.StringValue(util.ToJSONString(resp)))
-	}
-}
-
-// GetOutBoundIPV6 获取本地可访问的IPV6
-func (qs *QueryStruct) GetOutBoundIPV6() {
-	conn, err := net.Dial("udp6", "[2400:3200::1]:53")
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	ip := strings.Split(localAddr.String(), "]")[0]
-	qs.Value = strings.Replace(ip, "[", "", -1)
-}
-
-// GetOutBoundIPV4 获取本地可访问的IPV4
-func (qs *QueryStruct) GetOutBoundIPV4() {
-	conn, err := net.Dial("udp", "223.5.5.5:53")
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	qs.Value = strings.Split(localAddr.String(), ":")[0]
-}
-
-// DnsCheck 与返回的解析内容对比，确认是否需要更新、新增操作
-func (qs *QueryStruct) DnsCheck() {
-	qs.CreateClient()
-	qs.queryDomain()
-	if len(qs.Body.DomainRecords.Record) == 0 {
-		log.Infof("类型:%v\n本地解析结果:%v\n远端不存在此解析\n现在开始添加!...", qs.ValueType, qs.Value)
-		qs.addDomain()
-		return
-	}
-	for _, record := range qs.Body.DomainRecords.Record {
-		if qs.Value == record.Value {
-			log.Infof("类型:%v\n本地解析结果:%v\n远端解析结果:%v\n无需更新", qs.ValueType, qs.Value, record.Value)
-			return
-		} else {
-			log.Infof("类型:%v\n本地解析结果:%v\n远端解析结果:%v\n现在更新", qs.ValueType, qs.Value, record.Value)
-			qs.updateDomain()
-			return
-		}
 	}
 }

@@ -1,8 +1,11 @@
 package aliddns
 
 import (
+	"fmt"
 	log "github.com/sirupsen/logrus"
+	"io"
 	"net"
+	"net/http"
 	"strings"
 )
 
@@ -21,6 +24,7 @@ func (qs *QueryStruct) GetOutBoundIP() {
 // GetOutBoundIPV6 获取本地可访问的IPV6
 func (qs *QueryStruct) getOutBoundIPV6() {
 	conn, err := net.Dial("udp6", "[2400:3200::1]:53")
+	defer conn.Close()
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -32,11 +36,13 @@ func (qs *QueryStruct) getOutBoundIPV6() {
 
 // GetOutBoundIPV4 获取本地可访问的IPV4
 func (qs *QueryStruct) getOutBoundIPV4() {
-	conn, err := net.Dial("udp", "223.5.5.5:53")
+	resp, err := http.Get("https://api.ipify.org")
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-	qs.Value = strings.Split(localAddr.String(), ":")[0]
+	defer resp.Body.Close()
+
+	ip, _ := io.ReadAll(resp.Body)
+	qs.Value = fmt.Sprintf("%v", string(ip))
 }

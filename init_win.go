@@ -19,6 +19,6 @@ func init() {
 			return
 		}
 		*configFile = fmt.Sprintf("%v\\%v", filepath.Dir(path), "config.yaml")
-		log.Fatal(*configFile)
+		log.Warn(*configFile)
 	}
 }
